@@ -1,0 +1,4 @@
+rm WT_1_EWAT_1_val_1_M_U_FC_tpm.genloc_c946.txt
+rm KO_2_EWAT_1_val_1_M_U_FC_tpm.genloc_c946.txt
+rm WT_2_EWAT_1_val_1_M_U_FC_tpm.genloc_c946.txt
+rm KO_1_EWAT_1_val_1_M_U_FC_tpm.genloc_c946.txt

@@ -1,0 +1,4 @@
+../02.mapped_out/WT_1_EWAT_1_val_1_M_U_FC_tpm.genloc
+../02.mapped_out/KO_2_EWAT_1_val_1_M_U_FC_tpm.genloc
+../02.mapped_out/WT_2_EWAT_1_val_1_M_U_FC_tpm.genloc
+../02.mapped_out/KO_1_EWAT_1_val_1_M_U_FC_tpm.genloc

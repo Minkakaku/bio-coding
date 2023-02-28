@@ -1,0 +1,2 @@
+../02.mapped_out/WT_1_EWAT_1_val_1_U_FC.tpm
+../02.mapped_out/WT_2_EWAT_1_val_1_U_FC.tpm

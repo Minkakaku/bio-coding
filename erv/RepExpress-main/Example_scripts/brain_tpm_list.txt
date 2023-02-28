@@ -1,3 +1,0 @@
-../brain_testis_trial/SRR2422921_1_at_U_FC.tpm
-../brain_testis_trial/SRR2422922_1_at_U_FC.tpm
-../brain_testis_trial/SRR2422924_1_at_U_FC.tpm
