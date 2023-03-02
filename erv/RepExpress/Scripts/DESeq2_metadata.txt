@@ -1,5 +1,0 @@
-ColID	descr
-WT_1_EWAT_1_val_1_U_FC.tpm	control
-WT_2_EWAT_1_val_1_U_FC.tpm	control
-KO_1_EWAT_1_val_1_U_FC.tpm	treatment
-KO_2_EWAT_1_val_1_U_FC.tpm	treatment

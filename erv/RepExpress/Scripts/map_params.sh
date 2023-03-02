@@ -11,7 +11,7 @@
 # there, since this will cause the stringtie run to fail.
 
 #mapping_output_dir="./star_out/";
-mapping_output_dir="/data/gpfs02/wmo/HF_work/CQ/EWAT/02.mapped_out/";
+mapping_output_dir="../02.mapped_out/";
 
 # Your data files for mapping: Read1 required, Read 2 optional, leave blank if not used
 # can be gzip compressed if your file system allows this.

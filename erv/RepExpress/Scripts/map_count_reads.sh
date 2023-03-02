@@ -130,6 +130,7 @@ fi
 "${path_to_featurecounts}"featureCounts -a "${ucsc_repeats_uniq_gtf}" \
   -o "${star_out_prefix}""M_FC.txt" -t "exon" -f -p -M -O --fraction \
   -g "gene_id" ${featurecounts_overlap} ${featurecounts_strandedness} \
+  ${featurecounts_overlap_partial} \
   -T "${featurecounts_threads}" "${star_out_bam_name}"
 
 if [[ -n ${verbose} ]]; then

@@ -5,9 +5,9 @@ bsub -q normal_1day_new -n 24 -e /data/gpfs02/wmo/HF_work/00.err_log/generate_co
 ./generate_combined_gtfs.sh basic_params.sh
 
 for i in `cat name`;do
-bsub -q normal_1day_new -n 24 -e /data/gpfs02/wmo/HF_work/00.err_log/$i.err \
+bsub -q normal_1day_new -n 8 -e /data/gpfs02/wmo/HF_work/00.err_log/$i.err \
 -o /data/gpfs02/wmo/HF_work/00.err_log/$i.log -J $i \
-trim_galore -q 20 --phred33 --stringency 3 --length 20 -e 0.1 --fastqc\
+trim_galore -q 20 -j 8 --phred33 --stringency 3 --length 20 -e 0.1 --fastqc\
             --paired ../00.rawdata/$i\_1.fq.gz ../00.rawdata/$i\_2.fq.gz  \
             --gzip -o ../01.qc
 done
