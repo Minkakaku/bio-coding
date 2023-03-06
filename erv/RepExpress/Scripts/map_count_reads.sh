@@ -149,15 +149,15 @@ fi
 
 if [[ -n ${verbose} ]]; then
 
-printf "Running ${path_to_stringtie}stringtie on\n  '${star_out_bam_name}'\n"
+printf "Running ${path_to_featurecounts}featureCounts on\n  '${star_out_bam_name}'\n"
 
 fi
 
-stringtie_ga_out_file="${r1_fq_base}""_gene_abund_e.out";
-
-"${path_to_stringtie}"stringtie "${star_out_bam_name}" -G "${gencode_gene_gtf}" \
-  -o "${star_out_prefix}""stringtie_e.gtf" -B -p "${stringtie_threads}" \
-  -e -A "${stringtie_ga_out_file}";
+"${path_to_featurecounts}"featureCounts -a "${gencode_gene_gtf}" \
+  -o "${star_out_prefix}""gene_counts.txt" -t "exon" -f -p -O \
+  -g "gene_id" ${featurecounts_overlap} ${featurecounts_strandedness} \
+  ${featurecounts_overlap_partial} \
+  -T "${featurecounts_threads}" "${star_out_bam_name}"
 
 # combine featureCounts Unique and Multi files, derive TPMs
 # and join
