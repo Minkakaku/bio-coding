@@ -107,16 +107,15 @@ printf "running STAR, results to dir '${mapping_output_dir}'\n";
 
 fi
 
-# run STAR on reads:
+# # run STAR on reads:
 
-"${path_to_star}"STAR --runThreadN "${starthreads}" --genomeDir "${star_genome_dir}" \
-  --readFilesIn "${read1_fastq}" "${read2_fastq}" \
-  --outFileNamePrefix "${star_out_prefix}"  --outSAMtype BAM SortedByCoordinate \
-  --outSAMattributes NH   HI   AS   nM   XS \
-  --outFilterMultimapNmax "${starfiltermax}" \
-  --winAnchorMultimapNmax "${staranchormax}" \
-  --readFilesCommand zcat \
-  --quantMode GeneCounts;
+# "${path_to_star}"STAR --runThreadN "${starthreads}" --genomeDir "${star_genome_dir}" \
+#   --readFilesIn "${read1_fastq}" "${read2_fastq}" \
+#   --outFileNamePrefix "${star_out_prefix}"  --outSAMtype BAM SortedByCoordinate \
+#   --outSAMattributes NH   HI   AS   nM   XS \
+#   --outFilterMultimapNmax "${starfiltermax}" \
+#   --winAnchorMultimapNmax "${staranchormax}" \
+#   --readFilesCommand zcat;
 fi
 
 # run FeatureCounts on results, Multicount, then Unique count
@@ -145,7 +144,7 @@ fi
   ${featurecounts_overlap_partial} \
   -T "${featurecounts_threads}" "${star_out_bam_name}"
 
-# stringtie runs
+# GENECODE runs
 
 if [[ -n ${verbose} ]]; then
 
@@ -241,20 +240,6 @@ awk -f append_tpm_FC.awk colhdr="M_TPM" nonzerotpms=1 "${star_out_prefix}""M_FC.
 awk -f append_tpm_FC.awk colhdr="U_TPM" nonzerotpms=1 "${star_out_prefix}""U_FC.txt" | \
   sort -k 1,1 > "${star_out_prefix}""U_FC.tpm";
 
-# extract a list of non_zero tpms, then join
-
-if [[ -n ${verbose} ]]; then
-
-printf "Combining Multi and Unique TPMs into '${star_out_prefix}M_U_FC.tpm'\n"
-
-fi
-
-cat "${star_out_prefix}""M_FC.tpm" "${star_out_prefix}""U_FC.tpm" | \
-  cut -f 1 | sort -u | \
-  join -a 1 -e "-" -o '0,2.2,2.3,2.4,2.5,2.6,2.7,2.8' - "${star_out_prefix}""M_FC.tpm" | \
-  join -a 1 -e "-" -o '0,1.2,1.3,1.4,1.5,1.6,1.7,1.8,2.8' - "${star_out_prefix}""U_FC.tpm" | \
-  tr " " "\t" > "${star_out_prefix}""M_U_FC.tpm";
-
 # sort by tpm ('M' value) and
 # put unique RE element ID at end of line,
 # then run identgeneloc on this, to locate proximal genes
@@ -296,59 +281,12 @@ else
 }
 SCRIPT3
 
-cat << 'APND_ST_GA' > appnd_stringtie_ga.awk
-# appnd_stringie_ga.awk: script to read counts and TPMs from Stringtie gene abundance file
-# into an array, indexed by the Ensemble gene ID, then append matching values to a
-# file from identgeneloc with (or without) gene names appended.  This script
-# will also append the gene name from Stringtie
-#
-# Peter Stockwell: Sep-2020
-#
 
-BEGIN{if (length(stie_file_name) <= 0)
-  {
-  printf("script needs a Stringtie file name as a -v stie_file_name= command option\n");
-  exit(1);
-  }
-else
-  {
-  while (getline ret < stie_file_name > 0)
-    {
-    ns = split(ret,rsplit);
-    ens_gname = rsplit[1];
-    if (!(ens_gname in st_tpms))
-      {
-      st_tpms[ens_gname] = rsplit[ns];
-      gnames[ens_gname] = rsplit[2];
-      }
-    }
-  close(stie_file_name);
-  ensid_col = 16;
-  }
-}
-
-$1~/#/{printf("%s\tgene\tst_tpm\n",$0);}
-
-$1!~/#/{ens_name = substr($ensid_col,2,length($ensid_col) - 2);
-if (ens_name in st_tpms)
-  printf("%s\t%s\t%s\n",$0,gnames[ens_name],st_tpms[ens_name]);
-else
-  printf("%s\t-\t-\n",$0);
-}
-APND_ST_GA
 
 # generate a header line for output
 
-printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tM_TPM\tU_TPM\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\n" > "${star_out_prefix}""M_U_FC_tpm.genloc";
+printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tU_TPM\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\n" > "${star_out_prefix}""U_FC_tpm.genloc";
 
-# reorder columns for identgeneloc, cut to remove unwanted columns,
-# then append gene name.
-
-if [[ -n ${verbose} ]]; then
-
-printf "Reordering columns and appending gene names,\n writing to '${star_out_prefix}M_U_FC_tpm.genloc'\n";
-
-fi
 
 # we need the ensid_vs_gname.txt file locally, so copy it from where it
 # was made
@@ -362,26 +300,14 @@ fi
 # We won't sort this genloc file by tpm, since this makes it more complicated down
 # the track for combining expression values
 
-cat "${star_out_prefix}""M_U_FC.tpm" | awk -f reorder_cols.awk | \
+cat "${star_out_prefix}""U_FC.tpm" | awk -f reorder_cols.awk | \
 "${path_to_dmap}"identgeneloc -T -f "${gencode_gene_gtf}" -i -C 9 -a "transcript" -A gene_id  -r - | \
   awk -f add_gene_names_to_genloc.awk ensid_col=15 ensid_to_gene_file="${ensid_vs_gname}" | \
-  cut -f 1-11,14- >> "${star_out_prefix}""M_U_FC_tpm.genloc";
-
+  cut -f 1-11,14- >> "${star_out_prefix}""U_FC_tpm.genloc";
 # Now sort this genloc file by col 7 (Multi featureCount tpm) and
 # append stringtie gene abundance figures to produce a sorted gene abundance file
 
-if [[ -n ${verbose} ]]; then
-
-printf "Sorting by Multi TPM and appending stringtie gene abundance,\n"
-printf " writing to '${star_out_prefix}sorted_gene_abund.genloc'\n";
-
-fi
-
-printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tM_TPM\tU_TPM\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\tStringtieAbund\n" > "${star_out_prefix}""sorted_gene_abund.genloc";
-
-tail -n +2 "${star_out_prefix}""M_U_FC_tpm.genloc" | cut -f 1-14 | sort -nr -k 7,7  | \
-  awk -v stie_file_name="${stringtie_ga_out_file}" -f appnd_stringtie_ga.awk ensid_col=13 \
-  >> "${star_out_prefix}""sorted_gene_abund.genloc";
+# printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tU_TPM\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\n" > "${star_out_prefix}""U_FC_tpm.genloc";
 
 # tidy up scripts if required
 
@@ -399,17 +325,10 @@ if [[ -n ${verbose} ]]; then
 
 printf "\nMapping and counting run completed.\n\n";
 
-printf "STAR output in '${star_out_bam_name}'\n";
-printf "featureCounts multi output in '"${star_out_prefix}""_M_FC.txt"'\n";
-printf "featureCounts unique output in '"${star_out_prefix}""_U_FC.txt"'\n";
-printf "stringtie output in '"${star_out_prefix}""stringtie_e.gtf"'\n";
-printf "featureCounts multi & unique TPMs in '"${star_out_prefix}""M_U_FC.tpm"'\n";
-printf "identgeneloc output with multi TPM in '"${star_out_prefix}""M_U_FC_tpm.genloc"'\n\n";
-printf "'"${star_out_prefix}""M_U_FC_tpm.genloc"' sorted with stringtie gene abundance in\n   '"${star_out_prefix}""sorted_gene_abund.genloc"'";
-
 fi
 
 exit 0;
+
 
 else
 
