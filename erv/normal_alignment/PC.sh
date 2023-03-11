@@ -9,5 +9,5 @@ samtools sort -@ 24 -o 02.bam/$i.sorted.bam 02.bam/$i.bam
 samtools index -@ 24 02.bam/$i.sorted.bam
 featureCounts -T 24 -t exon -p -g gene_id -s 1 -a /data/gpfs02/wmo/genome/mm39/TE/mm39.TE.gtf \
 -o 03.counts/$i.count 02.bam/$i.sorted.bam
-cut -f 1,7 03.counts/$i.count |grep -v '^#' > 03.counts/$i.counts.txt
+cut -f 1,2,3,4,7 03.counts/$i.count |grep -v '^#' > 03.counts/$i.counts.txt
 cut -f 1,6 03.count/$i.count |grep -v '^#'> 02.count/$id.lengths.txt

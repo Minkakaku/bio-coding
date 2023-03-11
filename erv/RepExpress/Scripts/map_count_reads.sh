@@ -109,13 +109,13 @@ fi
 
 # # run STAR on reads:
 
-# "${path_to_star}"STAR --runThreadN "${starthreads}" --genomeDir "${star_genome_dir}" \
-#   --readFilesIn "${read1_fastq}" "${read2_fastq}" \
-#   --outFileNamePrefix "${star_out_prefix}"  --outSAMtype BAM SortedByCoordinate \
-#   --outSAMattributes NH   HI   AS   nM   XS \
-#   --outFilterMultimapNmax "${starfiltermax}" \
-#   --winAnchorMultimapNmax "${staranchormax}" \
-#   --readFilesCommand zcat;
+"${path_to_star}"STAR --runThreadN "${starthreads}" --genomeDir "${star_genome_dir}" \
+  --readFilesIn "${read1_fastq}" "${read2_fastq}" \
+  --outFileNamePrefix "${star_out_prefix}"  --outSAMtype BAM SortedByCoordinate \
+  --outSAMattributes NH   HI   AS   nM   XS \
+  --outFilterMultimapNmax "${starfiltermax}" \
+  --winAnchorMultimapNmax "${staranchormax}" \
+  --readFilesCommand zcat;
 fi
 
 # run FeatureCounts on results, Multicount, then Unique count
