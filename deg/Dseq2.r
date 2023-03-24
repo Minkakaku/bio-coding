@@ -32,6 +32,7 @@ dds <- DESeqDataSetFromMatrix(
 )
 dds <- DESeq(dds)
 coldata
+# KO 在前
 res_24 <- results(dds, contrast = c("condition", "Mko_WEo_24", "Mko_WEe_24"))
 res_72 <- results(dds, contrast = c("condition", "Mko_WEo_72", "Mko_WEe_72"))
 res_48 <- results(dds, contrast = c("condition", "Mko_WEo_48", "Mko_WEe_48"))
