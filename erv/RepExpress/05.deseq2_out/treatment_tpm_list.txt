@@ -1,2 +1,0 @@
-../02.mapped_out/KO_1_EWAT_1_val_1_U_FC.tpm
-../02.mapped_out/KO_2_EWAT_1_val_1_U_FC.tpm

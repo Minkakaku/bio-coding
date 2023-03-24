@@ -24,13 +24,10 @@ delete_temp_files="";
 # path to STAR executable: can be left empty if STAR is already on your exec PATH
 #  The command 'which STAR' will indicate this for you.
 
-path_to_star="";
-
 # STAR mapping run parameters:
-
 starfiltermax="150";
 staranchormax="150";
-starthreads="24";
+starthreads="16";
 
 # path to featureCounts executable: empty if on your path
 # 'which featureCounts' will indicate this
@@ -39,18 +36,10 @@ path_to_featurecounts="";
 
 # featureCounts parameters
 
-featurecounts_threads="24";
+featurecounts_threads="16";
 featurecounts_overlap="--minOverlap 25";
-featurecounts_overlap_partial="--fracOverlap 0.6"
+featurecounts_overlap_partial="--fracOverlap 1"
 
-# path to stringtie executable: empty if already on your path
-# 'which stringtie' will indicate this
-
-path_to_stringtie="";
-
-# stringtie parameters
-
-stringtie_threads="24";
 
 # path to DMAP executables, particularly identgeneloc.
 #  leave empty if these are already on your path
@@ -68,7 +57,7 @@ genome_fasta_file="/data/gpfs02/wmo/genome/GENCODE/GRCm39/ref/GRCm39.genome.fa";
 
 # the location where the index files are written and read from
 
-star_genome_dir="/data/gpfs02/wmo/genome/STAR_index/STAR_index_GRCm39_te";
+star_genome_dir="/data/gpfs02/wmo/genome/UCSC/index/star";
 
 # 4. Locations of gtf annotation files
 
@@ -88,8 +77,7 @@ star_genome_dir="/data/gpfs02/wmo/genome/STAR_index/STAR_index_GRCm39_te";
 #
 # The file can be gzip compressed or not.  The gzip compression at the web interface
 #  didn't seem to work.
-
-ucsc_repeat_src="/data/gpfs02/wmo/genome/GENCODE/GRCm39/rep/rep_RepeatMasker_GRCm39.txt"
+ucsc_repeat_gtf="/data/gpfs02/wmo/genome/UCSC/rep_gtf/rep_RepeatMasker_GRCm39.gtf";
 
 # name of gencode gene annotation gtf file, available from
 # https://www.gencodegenes.org/human/release_32lift37.html or
@@ -99,46 +87,5 @@ ucsc_repeat_src="/data/gpfs02/wmo/genome/GENCODE/GRCm39/rep/rep_RepeatMasker_GRC
 #
 # The GRCh38 release is available from the related directory.
 #
-
-gencode_gene_gtf_src="/data/gpfs02/wmo/genome/GENCODE/GRCm39/annotes/gencode.vM32.chr_patch_hapl_scaff.annotation.gtf"
-
-# Name of dir to save repeat and gencode gtfs: blank will use current default
-#  this assumes both are going to be in the same location.
-
-repeat_gene_gtf_dir="/data/gpfs02/wmo/genome/GENCODE/GRCm39/gtf_rep/";
-
-# Name of combined gene+repeat gtf file - leave blank for a default name
-
-gene_repeat_gtf=""
-
-# Stuff below here is combining and processing information from above.
-# It should not be necessary to change anything below
-
-# check the gencode gene gtf details:
-# if it has a gzip extension then modify the name appropriately
-
-if [[ "${gencode_gene_gtf_src}" == *".gz" ]]; then
-
-  gencode_gene_gtf="${repeat_gene_gtf_dir}"$(basename "${gencode_gene_gtf_src}" ".gz");
-  
-
-else
-
-  gencode_gene_gtf="${gencode_gene_gtf_src}";
-
-fi
-
-if [[ -z ${gene_repeat_gtf} ]]; then
-
-gene_repeat_gtf="${repeat_gene_gtf_dir}""GenesPlusRepeats.gtf"
-
-fi
-
-# name for ensembl ID vs gene name file
-
-ensid_vs_gname="${repeat_gene_gtf_dir}""ensid_vs_gname.txt";
-
-# name for unique repeat gtf file:
-
-ucsc_repeats_uniq_gtf="${repeat_gene_gtf_dir}""ucsc_repeats_uniq.gtf"
-
+ucsc_gene_gtf="/data/gpfs02/wmo/genome/UCSC/gen_gtf/mm39.ncbiRefSeq.gtf"
+#uncompress first
