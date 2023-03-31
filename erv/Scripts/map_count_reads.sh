@@ -1,16 +1,4 @@
 #!/bin/bash
-#
-# RepExpress script to map user reads to genome with
-#  associated gtf files and run Stringtie and Featurecounts
-#  on the results.
-#
-# requires two parameters: the name of a file containing
-# basic run time information and the name of a run-specific
-# file defining the mapping output directory and the read
-# files.
-#
-# Peter Stockwell: Feb-2021
-#
 
 # check for parameter:
 
@@ -169,17 +157,13 @@ SCRIPT2
 
 
 # generate a header line for output
-printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\n" > "${star_out_prefix}""U_FC.genloc";
+printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tRE_uniq_ID\tDistToGene\tOccupy\tLocationWRTgene\tGeneSense\tGeneCoord\tGeneName\t\genelocation\n" > "${star_te_out_prefix}""U_FC.genloc";
 
 # the track for combining expression values
 
 cat "${star_te_out_prefix}""U_FC.txt" | awk -f reorder_cols.awk | \
 "${path_to_dmap}"identgeneloc -T -f "${ucsc_gene_gtf}" -i -C 9 -a "transcript" -A gene_id  -r - | \
 cut -f 1-11,14- >> "${star_te_out_prefix}""U_FC.genloc";
-# Now sort this genloc file by col 7 (Multi featureCount tpm) and
-
-# printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tU_TPM\tRE_uniq_ID\tDistToGene\tLocationWRTgene\tGeneSense\tEnsemblID\tGeneCoord\tGeneName\n" > "${star_out_prefix}""U_FC_tpm.genloc";
-
 # tidy up scripts if required
 
 if [[ -n ${delete_temp_files} ]]; then
