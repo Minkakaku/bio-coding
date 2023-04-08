@@ -2,50 +2,46 @@ rm(list = ls())
 library(AnnotationDbi)
 library(DESeq2)
 library(dplyr)
+library(tidyr)
 
-
-path <- "/home/hongfan/Punchure/projects/YHF_org/03.counts"
+path <- "/home/hongfan/PJ/YXX/NASH/repeat"
 setwd(path)
 list.files()
 
-countdata <- read.csv("merge.counts.csv", header = TRUE, row.names = 2)
-countdata <- countdata[, -1]
-countdata <- countdata[rowMeans(countdata) > 1, ]
-c("24", "48", "72", "Mko_WEo", "Mko_WEe")
+countdata <- read.delim("merge.txt", header = TRUE)
+head(countdata)
+countdata <- countdata[, -6]
+countdata = unite(countdata, "id",
+    c("Chromosome", "start", "end", "RE_uniq_ID"),
+    sep = ","
+)
+head(countdata)
 
-countdata <- countdata[, grep("48", colnames(countdata))]
+exp = countdata[,c(1,11:22)]
+head(exp)
+rownames(exp) = exp[, 1]
+exp = exp[,-1]
+exp <- exp[rowMeans(exp) > 1, ]
 
-treat <- as.data.frame(strsplit(colnames(countdata), "h"))[1, ]
-treat <- unique(as.character(treat))
-condition <- factor(rep(treat, each = 2))
-# time <- factor(c(
-#     rep(rep(c("24", "72"), each = 2), 4),
-#     rep(rep(c("24", "48", "72"), each = 2), 2),
-#     rep(rep(c("24", "72"), each = 2), 2)
-# ))
-# coldata <- data.frame(row.names = colnames(countdata), condition, time)
-coldata <- data.frame(row.names = colnames(countdata), condition)
+coldata = read.csv("SraRunTable.csv")
+coldata =coldata[,c("Run",'Phenotype')]
+coldata
+
 dds <- DESeqDataSetFromMatrix(
-    countData = countdata,
+    countData = exp,
     colData = coldata,
-    design = ~condition
+    design = ~Phenotype
 )
 dds <- DESeq(dds)
 coldata
 # KO 在前
-res_24 <- results(dds, contrast = c("condition", "Mko_WEo_24", "Mko_WEe_24"))
-res_72 <- results(dds, contrast = c("condition", "Mko_WEo_72", "Mko_WEe_72"))
-res_48 <- results(dds, contrast = c("condition", "Mko_WEo_48", "Mko_WEe_48"))
-
-resordered <- res_48[order(res_48$pvalue), ]
+res <- results(dds, contrast = c("Phenotype", "NASH", "chow"))
+resordered <- res[order(res$pvalue), ]
 # sum(resordered$padj < 0.1, na.rm = TRUE) # 有多少padj小于0.1的
 # diff_gene <- subset(resordered, padj < 0.1 & abs(log2FoldChange) > 1)
 
 res <- as.data.frame(resordered)
 res$id <- rownames(res)
-countdata <- countdata[, grep("Mko_WE", colnames(countdata))]
-countdata <- countdata[, grep("48", colnames(countdata))]
-countdata$id <- rownames(countdata)
 res1 <- merge(res, countdata, by = "id")
 res1 <- res1[order(res1$pvalue), ]
-write.csv(res1, file = "res_48.csv", row.names = FALSE)
+write.csv(res1, file = "NASH,CHOW,repeatM.csv", row.names = FALSE)

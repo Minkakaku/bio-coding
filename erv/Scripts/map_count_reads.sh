@@ -157,7 +157,7 @@ SCRIPT2
 
 
 # generate a header line for output
-printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tRE_uniq_ID\tDistToGene\tOccupy\tLocationWRTgene\tGeneSense\tGeneCoord\tGeneName\t\genelocation\n" > "${star_te_out_prefix}""U_FC.genloc";
+printf "#Chromosome\tstart\tend\tstrand\tlength\thits\tRE_uniq_ID\tDistToGene\tOccupy\tLocationWRTgene\tGeneSense\tGeneCoord\tGeneName\tgenelocation\n" > "${star_te_out_prefix}""U_FC.genloc";
 
 # the track for combining expression values
 
