@@ -2,8 +2,6 @@
 # get params from path file
 . "$1";
 
-
-
 # check if we really need to build the STAR index
 
 if [[ -f "${star_genome_dir}""/Genome" && -f "${star_genome_dir}""/geneInfo.tab" ]]; then
