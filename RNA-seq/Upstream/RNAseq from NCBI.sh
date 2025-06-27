@@ -1,18 +1,9 @@
 ## RNA-seq for paper
 ## data from http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155972
-## 2021.9.19
 
-cd /data/gpfs02/wmo/work/repeat-seq/CSX/paper_nature  
-# 文件路径名
-# 查看软件存不存在
-# 下载
-
-
-
-#chip peak calling progress
-## download
-mkdir 00.rawdata/ 01.fastq 02.QC 03.Alignment/ 04.featureCounts
-# bsub -q normal_1week -n 1 -e SRR14574918.err -o SRR14574918.log -J SRR14574918 \
+## 1. download srr file
+## create new folders
+mkdir 00.rawdata/ 01.fasta/ 02.QC/ 03.Alignment/ 04.featureCounts/
 prefetch --option-file name -O 00.rawdata/
 
 ## translate srr file to fastq file
