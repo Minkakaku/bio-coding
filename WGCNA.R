@@ -1,30 +1,28 @@
-## WGCNA
-
 library(WGCNA)
 library(reshape2)
 library(stringr)
 
-directory = 'D:/Users/24432/Desktop/ÉúÐÅ/WGCNA/csx'
+directory = 'D:/Users/24432/Desktop/ï¿½ï¿½ï¿½ï¿½/WGCNA/csx'
 setwd(directory)
 list.files()
 
 exprMat <- "All expression BG"
 
 options(stringsAsFactors = FALSE)
-# ´ò¿ª¶àÏß³Ì
+# ï¿½ò¿ª¶ï¿½ï¿½ß³ï¿½
 enableWGCNAThreads()
 
-# ¹Ù·½ÍÆ¼ö "signed" »ò "signed hybrid"
+# ï¿½Ù·ï¿½ï¿½Æ¼ï¿½ "signed" ï¿½ï¿½ "signed hybrid"
 type = "unsigned"
 # corType: pearson or bicor
 corType = "pearson"
 
 corFnc = ifelse(corType=="pearson", cor, bicor)
-# ¶Ô¶þÔª±äÁ¿£¬ÈçÑù±¾ÐÔ×´ÐÅÏ¢¼ÆËãÏà¹ØÐÔÊ±£¬
-# »ò»ùÒò±í´ïÑÏÖØÒÀÀµÓÚ¼²²¡×´Ì¬Ê±£¬ÐèÉèÖÃÏÂÃæ²ÎÊý
+# ï¿½Ô¶ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½×´Ì¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 maxPOutliers = ifelse(corType=="pearson",1,0.05)
 
-# ¹ØÁªÑùÆ·ÐÔ×´µÄ¶þÔª±äÁ¿Ê±£¬ÉèÖÃ
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½×´ï¿½Ä¶ï¿½Ôªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #robustY = ifelse(corType=="pearson",T,F)
 
 dataExpr <- read.csv("All expression BG.csv", header = T, stringsAsFactors = F)
@@ -36,13 +34,13 @@ dataExpr3[is.na(dataExpr3)] = 0
 #dataExpr3 = dataExpr2[complete.cases(dataExpr2),]
 #dataExpr3 <- dataExpr3[-which(rowMeans(dataExpr3) == dataExpr3$P1BGwt1.FPKM|rowMeans(dataExpr3)<5),]
 
-# É¸Ñ¡ÖÐÎ»¾ø¶ÔÆ«²îÇ°75%µÄ»ùÒò£¬ÖÁÉÙMAD´óÓÚ0.01
+# É¸Ñ¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½Ç°75%ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MADï¿½ï¿½ï¿½ï¿½0.01
 m.mad <- apply(dataExpr3,1,mad)
 dataExprVar <- dataExpr3[which(m.mad > max(quantile(m.mad, probs=seq(0, 1, 0.25))[2],0.01)),]
 
 dataExpr4 <- as.data.frame(t(dataExprVar))
 
-## ¼ì²âÈ±Ê§Öµ
+## ï¿½ï¿½ï¿½È±Ê§Öµ
 gsg = goodSamplesGenes(dataExpr4, verbose = 3)
 
 if (!gsg$allOK){
@@ -60,29 +58,29 @@ if (!gsg$allOK){
 nGenes = ncol(dataExpr4)
 nSamples = nrow(dataExpr4)
 
-## ²é¿´ÊÇ·ñÓÐÀëÈºÑùÆ·
+## ï¿½é¿´ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Èºï¿½ï¿½Æ·
 sampleTree = hclust(dist(dataExpr4), method = "average")
 plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="")
 
-## ÈíãÐÖµµÄÉ¸Ñ¡Ô­ÔòÊÇÊ¹¹¹½¨µÄÍøÂç¸ü·ûºÏÎÞ±ê¶ÈÍøÂçÌØÕ÷
+## ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½É¸Ñ¡Ô­ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 powers = c(c(1:10), seq(from = 12, to=30, by=2))
 sft = pickSoftThreshold(dataExpr4, powerVector=powers, 
                         networkType=type, verbose=5)
 
 par(mfrow = c(1,2))
 cex1 = 0.9
-# ºáÖáÊÇSoft threshold (power)£¬×ÝÖáÊÇÎÞ±ê¶ÈÍøÂçµÄÆÀ¹À²ÎÊý£¬ÊýÖµÔ½¸ß£¬
-# ÍøÂçÔ½·ûºÏÎÞ±ê¶ÈÌØÕ÷ (non-scale)
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Soft threshold (power)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÔ½ï¿½ß£ï¿½
+# ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½Þ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (non-scale)
 plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
      xlab="Soft Threshold (power)",
      ylab="Scale Free Topology Model Fit,signed R^2",type="n",
      main = paste("Scale independence"))
 text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
      labels=powers,cex=cex1,col="red")
-# É¸Ñ¡±ê×¼¡£R-square=0.85 ÕâÀï¸ÄÁË
+# É¸Ñ¡ï¿½ï¿½×¼ï¿½ï¿½R-square=0.85 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 abline(h=0.85,col="red")
 
-# Soft thresholdÓëÆ½¾ùÁ¬Í¨ÐÔ
+# Soft thresholdï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
 plot(sft$fitIndices[,1], sft$fitIndices[,5],
      xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
      main = paste("Mean connectivity"))
@@ -91,7 +89,7 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers,
 power = sft$powerEstimate
 power
 
-# Èç¹ûÕâÈ·ÊµÊÇÓÉÓÐÒâÒåµÄÉúÎï±ä»¯ÒýÆðµÄ£¬Ò²¿ÉÒÔÊ¹ÓÃÏÂÃæµÄ¾­ÑépowerÖµ¡£
+# ï¿½ï¿½ï¿½ï¿½ï¿½È·Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½powerÖµï¿½ï¿½
   if (is.na(power)){
     power = ifelse(nSamples<20, ifelse(type == "unsigned", 9, 18),
                    ifelse(nSamples<30, ifelse(type == "unsigned", 8, 16),
@@ -101,7 +99,7 @@ power
     )
    }
 power
-##Ò»²½·¨ÍøÂç¹¹½¨£ºOne-step network construction and module detection##
+##Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç¹¹ï¿½ï¿½ï¿½ï¿½One-step network construction and module detection##
 
 net = blockwiseModules(dataExpr4, power = power, maxBlockSize = nGenes,
                        TOMType = type, minModuleSize = 30,
@@ -112,40 +110,40 @@ net = blockwiseModules(dataExpr4, power = power, maxBlockSize = nGenes,
                        saveTOMFileBase = paste0(exprMat, ".tom"),
                        verbose = 3)
 
-# ¸ù¾ÝÄ£¿éÖÐ»ùÒòÊýÄ¿µÄ¶àÉÙ£¬½µÐòÅÅÁÐ£¬ÒÀ´Î±àºÅÎª `1-×î´óÄ£¿éÊý`¡£
-# **0 (grey)**±íÊ¾**Î´**·ÖÈëÈÎºÎÄ£¿éµÄ»ùÒò¡£ 
+# ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ä¶ï¿½ï¿½Ù£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½Îª `1-ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½
+# **0 (grey)**ï¿½ï¿½Ê¾**Î´**ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½Ä£ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ 
 table(net$colors)
 
-## »ÒÉ«µÄÎª**Î´·ÖÀà**µ½Ä£¿éµÄ»ùÒò¡£
+## ï¿½ï¿½É«ï¿½ï¿½Îª**Î´ï¿½ï¿½ï¿½ï¿½**ï¿½ï¿½Ä£ï¿½ï¿½Ä»ï¿½ï¿½ï¿½
 # Convert labels to colors for plotting
 moduleLabels = net$colors
 moduleColors = labels2colors(moduleLabels)
 # Plot the dendrogram and the module colors underneath
-# Èç¹û¶Ô½á¹û²»ÂúÒâ£¬»¹¿ÉÒÔrecutBlockwiseTrees£¬½ÚÊ¡¼ÆËãÊ±¼ä
+# ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½recutBlockwiseTreesï¿½ï¿½ï¿½ï¿½Ê¡ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 plotDendroAndColors(net$dendrograms[[1]], moduleColors[net$blockGenes[[1]]],
                     "Module colors",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
 
-# module eigengene, ¿ÉÒÔ»æÖÆÏßÍ¼£¬×÷ÎªÃ¿¸öÄ£¿éµÄ»ùÒò±í´ïÇ÷ÊÆµÄÕ¹Ê¾
+# module eigengene, ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ÎªÃ¿ï¿½ï¿½Ä£ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½Õ¹Ê¾
 MEs = net$MEs
 
-### ²»ÐèÒªÖØÐÂ¼ÆËã£¬¸ÄÏÂÁÐÃû×Ö¾ÍºÃ
-### ¹Ù·½½Ì³ÌÊÇÖØÐÂ¼ÆËãµÄ£¬ÆðÊ¼¿ÉÒÔ²»ÓÃÕâÃ´Âé·³
+### ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Â¼ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Íºï¿½
+### ï¿½Ù·ï¿½ï¿½Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½é·³
 MEs_col = MEs
 colnames(MEs_col) = paste0("ME", labels2colors(
   as.numeric(str_replace_all(colnames(MEs),"ME",""))))
 MEs_col = orderMEs(MEs_col)
 
-# ¸ù¾Ý»ùÒò¼ä±í´ïÁ¿½øÐÐ¾ÛÀàËùµÃµ½µÄ¸÷Ä£¿é¼äµÄÏà¹ØÐÔÍ¼
-# marDendro/marHeatmap ÉèÖÃÏÂ¡¢×ó¡¢ÉÏ¡¢ÓÒµÄ±ß¾à
+# ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ä¸ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+# marDendro/marHeatmap ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½Ï¡ï¿½ï¿½ÒµÄ±ß¾ï¿½
 plotEigengeneNetworks(MEs_col, "Eigengene adjacency heatmap", 
                       marDendro = c(3,3,2,4),
                       marHeatmap = c(3,4,2,2), plotDendrograms = T, 
                       xLabelsAngle = 90)
 
-# Èç¹û²ÉÓÃ·Ö²½¼ÆËã£¬»òÉèÖÃµÄblocksize>=×Ü»ùÒòÊý£¬Ö±½Óload¼ÆËãºÃµÄTOM½á¹û
-# ·ñÔòÐèÒªÔÙ¼ÆËãÒ»±é£¬±È½ÏºÄ·ÑÊ±¼ä
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·Ö²ï¿½ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½blocksize>=ï¿½Ü»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½loadï¿½ï¿½ï¿½ï¿½Ãµï¿½TOMï¿½ï¿½ï¿½
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ù¼ï¿½ï¿½ï¿½Ò»ï¿½é£¬ï¿½È½ÏºÄ·ï¿½Ê±ï¿½ï¿½
 # TOM = TOMsimilarityFromExpr(dataExpr, power=power, corType=corType, networkType=type)
 load(net$TOMFiles[1], verbose=T)
 
@@ -162,7 +160,7 @@ plotTOM = dissTOM^7
 diag(plotTOM) = NA
 # Call the plot function
 
-# ÕâÒ»²¿·ÖÌØ±ðºÄÊ±£¬ÐÐÁÐÍ¬Ê±×ö²ã¼¶¾ÛÀà
+# ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ã¼¶ï¿½ï¿½ï¿½ï¿½
 TOMplot(plotTOM, net$dendrograms, moduleColors, 
         main = "Network heatmap plot, all genes")
 
