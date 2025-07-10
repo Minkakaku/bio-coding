@@ -9,7 +9,6 @@ setwd(workingDir)
 # 加载 WGCNA 包
 library(WGCNA)
 
-# 重要设置，请勿省略
 options(stringsAsFactors = FALSE)
 
 # 启用 WGCNA 多线程，加速部分计算
@@ -36,7 +35,7 @@ powers
 sft <- pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
 
 # 打开绘图窗口并设置布局
-sizeGrWindow(9, 5)
+sizeGrWindow(9, 10)
 par(mfrow = c(1, 2))
 cex1 <- 0.9
 
@@ -49,7 +48,7 @@ plot(sft$fitIndices[, 1], -sign(sft$fitIndices[, 3]) * sft$fitIndices[, 2],
 text(sft$fitIndices[, 1], -sign(sft$fitIndices[, 3]) * sft$fitIndices[, 2],
      labels = powers, cex = cex1, col = "red")
 # 绘制 R^2 阈值线
-abline(h = 0.90, col = "red")
+abline(h = 0.80, col = "red")
 
 # 绘制平均连接度随软阈值幂次的变化
 plot(sft$fitIndices[, 1], sft$fitIndices[, 5],
@@ -58,30 +57,29 @@ plot(sft$fitIndices[, 1], sft$fitIndices[, 5],
      type = "n",
      main = "Mean connectivity")
 text(sft$fitIndices[, 1], sft$fitIndices[, 5], labels = powers, cex = cex1, col = "red")
+abline(h = 20, col = "red")
 
-# 根据结果自动选择合适的软阈值
-optimal_power <- sft$fitIndices[which.max(-sign(sft$fitIndices[, 3]) * sft$fitIndices[, 2]), 1]
+optimal_power <- sft$powerEstimate
 cat("选择的最优软阈值幂次为: ", optimal_power, "\n")
 
-#=====================================================================================
-#
-#  Code chunk 3
-#
-#=====================================================================================
+output_dir <- "TOM_Matrix"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir)
+}
 
-net <- blockwiseModules(datExpr, power = optimal_power,
-                        TOMType = "unsigned", minModuleSize = 30,
-                        reassignThreshold = 0, mergeCutHeight = 0.25,
-                        numericLabels = TRUE, pamRespectsDendro = FALSE,
-                        saveTOMs = TRUE,
-                        saveTOMFileBase = "femaleMouseTOM", 
-                        verbose = 3)
+# 网络模块构造
 
-#=====================================================================================
-#
-#  Code chunk 4
-#
-#=====================================================================================
+net <- blockwiseModules(datExpr,
+                         # == Adjacency Function ==
+                         power = optimal_power, networkType = "signed",
+                         # == Tree and Block Options ==
+                         deepSplit = 2, pamRespectsDendro = F,minModuleSize = 30,maxBlockSize = 4000
+                         TOMType = "signed", 
+                         reassignThreshold = 0, mergeCutHeight = 0.25,
+                         numericLabels = TRUE, pamRespectsDendro = FALSE,
+                         saveTOMs = TRUE,
+                         saveTOMFileBase = "TOM_Matrix/femaleMouseTOM", 
+                         verbose = 3)
 
 # 打开绘图窗口
 sizeGrWindow(12, 9)
@@ -95,12 +93,6 @@ plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05)
 
-#=====================================================================================
-#
-#  Code chunk 5
-#
-#=====================================================================================
-
 moduleLabels <- net$colors
 moduleColors <- labels2colors(net$colors)
 MEs <- net$MEs
@@ -108,4 +100,4 @@ geneTree <- net$dendrograms[[1]]
 
 # 保存分析结果
 save(MEs, moduleLabels, moduleColors, geneTree, 
-     file = "FemaleLiver-02-networkConstruction-auto.RData")
+     file = "TOM_Matrix/networkConstruction.RData")
