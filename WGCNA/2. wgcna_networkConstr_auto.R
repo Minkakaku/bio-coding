@@ -66,18 +66,17 @@ output_dir <- "TOM_Matrix"
 if (!dir.exists(output_dir)) {
   dir.create(output_dir)
 }
-
 # 网络模块构造
-
 net <- blockwiseModules(datExpr,
                          # == Adjacency Function ==
                          power = optimal_power, networkType = "signed",
                          # == Tree and Block Options ==
                          deepSplit = 2, pamRespectsDendro = F,minModuleSize = 30,maxBlockSize = 4000
-                         TOMType = "signed", 
+                         # == Module Adjustments ==
                          reassignThreshold = 0, mergeCutHeight = 0.25,
                          numericLabels = TRUE, pamRespectsDendro = FALSE,
-                         saveTOMs = TRUE,
+                         # == TOM == Archive the run results in TOM file (saves time)
+                         saveTOMs = TRUE,TOMType = "signed", 
                          saveTOMFileBase = "TOM_Matrix/femaleMouseTOM", 
                          verbose = 3)
 
