@@ -18,7 +18,7 @@ lnames <- load(file = "WGCNA\\opt_inputdata\\opt_inputdata.RData")
 lnames
 
 # 加载第二部分保存的网络数据
-lnames <- load(file = "WGCNA\\TOM_Matrix\\networkConstruction_stepByStep.RData")
+lnames <- load(file = "WGCNA\\results\\networkConstruction_auto.RData")
 lnames
 
 # 获取基因数量和样本数量
