@@ -71,7 +71,7 @@ net <- blockwiseModules(datExpr,
                          # == Adjacency Function ==
                          power = optimal_power, networkType = "signed",
                          # == Tree and Block Options ==
-                         deepSplit = 2, pamRespectsDendro = F,minModuleSize = 30,maxBlockSize = 4000
+                         deepSplit = 2, pamRespectsDendro = F,minModuleSize = 30,maxBlockSize = 4000,
                          # == Module Adjustments ==
                          reassignThreshold = 0, mergeCutHeight = 0.25,
                          numericLabels = TRUE, pamRespectsDendro = FALSE,
@@ -98,5 +98,5 @@ MEs <- net$MEs
 geneTree <- net$dendrograms[[1]]
 
 # 保存分析结果
-save(MEs, moduleLabels, moduleColors, geneTree, 
+save(MEs, moduleLabels, moduleColors, geneTree,
      file = "TOM_Matrix/networkConstruction.RData")
