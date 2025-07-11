@@ -62,7 +62,7 @@ abline(h = 20, col = "red")
 optimal_power <- sft$powerEstimate
 cat("选择的最优软阈值幂次为: ", optimal_power, "\n")
 
-output_dir <- "TOM_Matrix"
+output_dir <- "results"
 if (!dir.exists(output_dir)) {
   dir.create(output_dir)
 }
@@ -71,13 +71,13 @@ net <- blockwiseModules(datExpr,
                          # == Adjacency Function ==
                          power = optimal_power, networkType = "signed",
                          # == Tree and Block Options ==
-                         deepSplit = 2, pamRespectsDendro = F,minModuleSize = 30,maxBlockSize = 4000,
+                         deepSplit = 2, minModuleSize = 30,maxBlockSize = 4000,
                          # == Module Adjustments ==
                          reassignThreshold = 0, mergeCutHeight = 0.25,
                          numericLabels = TRUE, pamRespectsDendro = FALSE,
                          # == TOM == Archive the run results in TOM file (saves time)
                          saveTOMs = TRUE,TOMType = "signed", 
-                         saveTOMFileBase = "TOM_Matrix/femaleMouseTOM", 
+                         saveTOMFileBase = "WGCNA\\results/femaleMouse_auto_singleTOM", 
                          verbose = 3)
 
 # 打开绘图窗口
@@ -99,4 +99,4 @@ geneTree <- net$dendrograms[[1]]
 
 # 保存分析结果
 save(MEs, moduleLabels, moduleColors, geneTree,
-     file = "TOM_Matrix/networkConstruction.RData")
+     file = "WGCNA\\results/networkConstruction_auto.RData")

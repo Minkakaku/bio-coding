@@ -11,7 +11,7 @@ library(purrr)
 # 加载数据
 paths <- c(
   "WGCNA\\opt_inputdata\\opt_inputdata.RData",
-  "WGCNA\\TOM_Matrix\\networkConstruction.RData"
+  "WGCNA\\results\\networkConstruction_auto.RData"
 )
 for (path in paths) {
   load(path)

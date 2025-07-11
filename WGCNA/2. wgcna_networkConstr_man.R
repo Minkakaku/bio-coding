@@ -1,14 +1,10 @@
 rm(list=ls())
-# 设置工作目录
-setwd("WGCNA")
-
 # 加载WGCNA包并进行必要设置
 library(WGCNA)
 options(stringsAsFactors = FALSE)
 enableWGCNAThreads()
-
 # 加载数据
-lnames <- load("opt_inputdata\\opt_inputdata.RData")
+lnames <- load("WGCNA\\opt_inputdata\\opt_inputdata.RData")
 lnames
 
 # 选择一组软阈值幂次
@@ -25,7 +21,7 @@ cex1 <- 0.9
 # 绘制无标度拓扑拟合指数
 colnames(sft$fitIndices)
 with(sft$fitIndices, {
-  png("figures/scaleIndependence.png")
+  png("WGCNA\\figures/scaleIndependence.png")
   plot(Power, -sign(slope) * SFT.R.sq,
        xlab = "Soft Threshold (power)",
        ylab = "Scale Free Topology Model Fit,signed R^2",
@@ -39,7 +35,7 @@ abline(h = 0.90, col = "red")
 
 # 绘制平均连接性
 with(sft$fitIndices, {
-  png("figures/meanConnectivity.png")
+  png("WGCNA\\figures/meanConnectivity.png")
   plot(Power, mean.k.,
        xlab = "Soft Threshold (power)",
        ylab = "Mean Connectivity",
@@ -63,7 +59,7 @@ geneTree <- hclust(as.dist(dissTOM), method = "average")
 
 # 绘制聚类树
 sizeGrWindow(12, 9)
-png("figures/geneClustering.png")
+png("WGCNA\\figures/geneClustering.png")
 plot(geneTree, xlab = "", sub = "", 
      main = "Gene clustering on TOM-based dissimilarity",
      labels = FALSE, hang = 0.04)
@@ -88,7 +84,7 @@ table(dynamicColors)
 
 # 绘制树状图和模块颜色
 sizeGrWindow(8, 6)
-png("figures/dynamicTreeCut.png")
+png("WGCNA\\figures/dynamicTreeCut.png")
 plotDendroAndColors(
   geneTree, dynamicColors, "Dynamic Tree Cut",
   dendroLabels = FALSE, hang = 0.03,
@@ -141,4 +137,4 @@ moduleLabels <- match(moduleColors, colorOrder) - 1
 MEs <- mergedMEs
 
 # 保存模块颜色和标签供后续使用
-save(MEs, moduleLabels, moduleColors, geneTree, file = "TOM_Matrix/networkConstruction_stepByStep.RData")
+save(MEs, moduleLabels, moduleColors, geneTree, file = "WGCNA\\results/networkConstruction_man.RData")
